@@ -1,0 +1,7 @@
+#https://www.atlassian.com/git/tutorials/saving-changes/gitignore
+**/facetrac_SVM/.yoloface/
+**/facetrac_yolo/.yoloface/
+**/.yoloface
+**/tello_photos
+**/tello_videos
+**/backup
