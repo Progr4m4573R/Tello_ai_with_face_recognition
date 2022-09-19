@@ -4,14 +4,15 @@ Tello drone AI with Face recognition and a host of additional control features s
 The tello_yolo.py will not run without the associated weights which i have taken out for the sake of uploading to gihub. these weights can be downloaded from my google drives 
 
 Python Requirements:
-Python 3.8.10
-Dlib's face recognition algorithm
-numpy
-cv2
-time
-sys
-djitellopy
-math
-pickle
-os
-PIL
+1.Python 3.8.10
+2.Dlib's face recognition algorithm
+3.numpy
+4.cv2
+5.time
+6.sys
+7.djitellopy
+8.math
+9.pickle
+10.os
+11.PIL
+12.YOLO darknet
