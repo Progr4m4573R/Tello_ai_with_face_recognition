@@ -53,8 +53,7 @@ while True:
     #step 5 optional-------control drone with ble devices i.e phones and watches
     
     #maping
-    map = np.zeros((1000,1000,3),np.uint8)#3 representscolored image
-    mapping.drawPoints(map)
+    mapping.mapping()
     
     print("Battery at: ",tello.get_battery(),"%")
     #print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
