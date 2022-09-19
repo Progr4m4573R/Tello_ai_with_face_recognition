@@ -1,32 +1,44 @@
 #Source: https://www.youtube.com/watch?v=P2wl3N2JW9c
-from logging import exception
-from queue import Empty
 from djitellopy import Tello
 import numpy as np
 import cv2
-#additions for detection with yoloface
-from yoloface import face_analysis
 #additions for detection with svm
 import face_recognition
 #additions for detection with haar_cascade
 import os
 import pickle
 
+#HAARCASCADE DEPENDENCIES
+facecascade = cv2.CascadeClassifier('/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/cascades/haarcascade_frontalface_alt2.xml')
+recogniser = cv2.face.LBPHFaceRecognizer_create()
+recogniser.read("/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/trainer.yml")
+labels = {}
+with open("/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/labels.pickle", "rb") as f:
+    og_labels = pickle.load(f)
+    #invert labels and id
+    labels = {v:k for k,v in og_labels.items()}
+#YOLO DEPENDENCIES
+net = cv2.dnn.readNetFromDarknet("/home/thinkpad/Desktop/Tello_ai_with_face_recognition/facetrac_yolo/src/yolov3_custom.cfg","/home/thinkpad/Desktop/Tello_ai_with_face_recognition/facetrac_yolo/src/backup/yolov3_custom_6000.weights")
+# Change here for custom classes for trained model this is really important because if the names are not in the correct order it will appear like improper classification
+classes = ['Dog','Barak Obama','Stephen','Jack Sparrow']
+
 
 def initialisetello():
     tello = Tello()
 
     tello.connect()
-    #set velocities to zero
+    #set velocities to zero, can be between -100~100
     tello.for_back_velocity = 0
     tello.left_right_velocity = 0
     tello.up_down_velocity = 0
     tello.yaw_velocity = 0 
-    tello.speed = 0
+    tello.speed = 10
 
+    tello.set_speed(tello.speed)
     print("Tello battery at ",tello.get_battery(),"%")
     tello.streamoff()
     tello.streamon()
+
     return tello
 
 def telloGetFrame(tello, w, h):
@@ -36,17 +48,6 @@ def telloGetFrame(tello, w, h):
     return img
 
 ################################################################HAAR_CASCADE######################################################
-
-facecascade = cv2.CascadeClassifier('/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/cascades/haarcascade_frontalface_alt2.xml')
-recogniser = cv2.face.LBPHFaceRecognizer_create()
-recogniser.read("/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/trainer.yml")
-labels = {}
-with open("/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/labels.pickle", "rb") as f:
-    og_labels = pickle.load(f)
-    #invert labels and id
-    labels = {v:k for k,v in og_labels.items()}
-
-
 def findfacehaar(img):
 
     imgGray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -80,15 +81,6 @@ def findfacehaar(img):
         return img,[[0,0],0],0
 
 ###############################################################YOLO####################################################################
-face=face_analysis()    #  Auto Download a large weight files from Google Drive.
-                        #  only first time.
-                        #  Automatically  create folder .yoloface on cwd.
-## provide the absolute path for testing config file and tained model from colab
-net = cv2.dnn.readNetFromDarknet("/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/facetrac_yolo/src/yolov3_custom.cfg","/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/facetrac_yolo/src/backup/yolov3_custom_6000.weights")
-
-# Change here for custom classes for trained model this is really important because if the names are not in the correct order it will appear like improper classification
-classes = ['Dog','Barak Obama','Stephen','Jack Sparrow']
-
 def findfaceyolo(img):
 
     hight,width,_ = img.shape
@@ -135,9 +127,10 @@ def findfaceyolo(img):
 
     if len(facecoords) != 0:
         i = facecoordsArea.index(max(facecoordsArea))
-        return img, [facecoords[i],facecoordsArea[i]]
+        return img, [facecoords[i],facecoordsArea[i]],label
     else:
-        return img,[[0,0],0]
+        return img,[[0,0],0],0
+
 #################################################################SVM#######################################################################################
 def findfaceSVM(frame):
 
@@ -232,15 +225,17 @@ def findfaceSVM(frame):
         else:
             return frame, [[0,0],0],0
       
-    except exception as e:
+    except Exception as e:
         if not tmp:
             print("No target set...", e)
             print("looking for target(s)...")
             tmp = os.listdir(default_folder)
             
-def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distance = [6200,6800],face_tracking=True,name=0):
+def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distance = [6200,6800],name=0):
+    
+    #---- RECOGNISED FACES ---- If named target detected, go to target
     if isinstance(name,str): 
-                
+        
         #---------------------------------PID control------------------------------------------------
         x,y = info[0]
         area = info[1]
@@ -271,6 +266,7 @@ def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distan
 
         #check if face detected in frame
         if x != 0:
+            # face_found = True
             #sending velocity commands to both YAW AND LEFT_RIGHT at the same time results in poor control, pick one and comment out the other
             tello.yaw_velocity = speedLR
             tello.up_down_velocity = speedUD
@@ -284,6 +280,9 @@ def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distan
             errorLR = 0
             errorUD = 0
             speedFB = 0
+        #if no face in frame and no body then look for people
+        # if x == 0 and body_found == False:
+        #     search_for_target(tello,target_lost=True)
             
         tello.send_rc_control(tello.left_right_velocity,
         tello.for_back_velocity,
@@ -292,9 +291,9 @@ def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distan
 
         return [errorLR,errorUD]
 
-
-    #If no target is detected get no closer than safe distance to closest face
+    #---- UNRECOGNISED FACES ----If no target is detected get no closer than safe distance to closest face 
     elif isinstance(name,int):
+
         x,y = info[0]
         area = info[1]
         speedFB = 0
@@ -307,6 +306,7 @@ def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distan
         
         #check if face detected in frame
         if x != 0:
+            # face_found = True
             tello.for_back_velocity = speedFB
         else:
             tello.for_back_velocity = 0
@@ -316,7 +316,10 @@ def trackface(tello, info,w,h,pid= [0.5,0.5,0],pErrorLR=0,pErrorUD=0,safe_distan
             errorLR = 0
             errorUD = 0
             speedFB = 0
-            
+        #if no face in frame and no body then look for people
+        # if x == 0 and body_found == False:
+        #     search_for_target(tello,target_lost=True)
+
         tello.send_rc_control(tello.left_right_velocity,
         tello.for_back_velocity,
         tello.up_down_velocity,

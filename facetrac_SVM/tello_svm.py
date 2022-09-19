@@ -1,32 +1,32 @@
 import cv2
 import time
+#Source: https://www.geeksforgeeks.org/python-import-module-from-different-directory/ I USED  THE COMMAND IN TERMINAL TO ADD MY IMPORTS TO THE PYTHON PATH export PYTHONPATH=’path/to/directory’
 import sys
-#source: https://stackoverflow.com/questions/12280143/how-to-move-to-one-folder-back-in-python
-sys.path.insert(1,'/home/thinkpad/Desktop/Tello_ai_face_recognition/tello-ai/resources/')#'/home/thinkpad/Desktop/Tello_Drone_Control/tello-ai/'
-#import face tracking module
+sys.path.insert(1,'/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources')
 from face_tracking import *
-#import keyboard module
+from body_tracking import *
 import keyboardControl as kbc
+import mapping
 #initialise keyboard control
 kbc.init()
 #Configurations------------------------------ 
 tello_fly = False
-keyboard_control = True
-facetracking = True
-
-#set frame size for processing-----------------
-w,h = 720,480
+w,h = kbc.w,kbc.h
 pid = [0.5,0.5,0]#change these values to make the movement smoother Proportional Intergral Derivitate
 
 #safe distance
 safe_distance = [6200,6800] #smaller values mean drone is closer; 6200 is about 2 metres equivalent
-
-#Actual error
+body_safe_distance = [6200,6800]
+#PID previous error for face tracking
 pErrorLR = 0
 pErrorUD = 0
+#PID previous error for body tracking
+BodypErrorLR = 0
+BodypErrorUD = 0
 #initialise tello---------------------------
 tello = initialisetello()
 #Run the code in loop so each frame can be processed---------
+
 while True:
     ##initial step
     if tello_fly == True:
@@ -34,25 +34,33 @@ while True:
         tello_fly = False
     
     ##Step 1 get frame from drone cam
-    tello_cam = tello.get_frame_read()
-    tello_cam = tello_cam.frame
+    tello_cam = tello.get_frame_read(); tello_cam = tello_cam.frame
+    
     #step 2 find face in frame with yolo
     frame,info,name = findfaceSVM(tello_cam)
-
-    #step 3 track the face with PID  error in x ais, y axis and front back
-    pErrorLR, pErrorUD = trackface(tello,info,w,h,pid,pErrorLR,pErrorUD,safe_distance,facetracking,name)
-    cv2.imshow('TelloSVM',frame)
-    
+    _,body_location = findpeople(tello_cam)
+    #step 3 track the face with PID
+    pErrorLR, pErrorUD = trackbodies(tello,body_location,w,h,pid,BodypErrorLR,BodypErrorUD,body_safe_distance)
+    pErrorLR, pErrorUD = trackface(tello,info,w,h,pid,pErrorLR,pErrorUD,safe_distance,name)
+    cv2.imshow("TelloSVM",frame)
     #step 4 optional-------control drone with keyboard, set to true to enable keyboard control
-    vals = kbc.action(keyboard_control,frame)
-    tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])    #print("lr,fb,ud,yv commands from keyboard: ",vals)
+    vals = kbc.action(frame)
     time.sleep(0.05)
+    
     #Can record videos by pressing v or take pictures with p    
     kbc.getVideoFrames(frame)
 
-    print("target: ",name)
     #step 5 optional-------control drone with ble devices i.e phones and watches
+    
+    #maping
+    map = np.zeros((1000,1000,3),np.uint8)#3 representscolored image
+    mapping.drawPoints(map)
+    
     print("Battery at: ",tello.get_battery(),"%")
+    #print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
+    #print("Height at: ", tello.get_height()/100)
     if cv2.waitKey(1) & kbc.getKey("c"):
         print("Communication Terminated....")
         break
+#call to deallocate resources
+tello.end()

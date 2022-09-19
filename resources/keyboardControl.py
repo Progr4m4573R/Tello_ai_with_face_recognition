@@ -2,7 +2,7 @@ from djitellopy import Tello
 import pygame
 import time
 import cv2
-
+import numpy as np
 #initialise tello
 tello = Tello()
 
@@ -37,46 +37,45 @@ def getVideoFrames(img):
     
     video_frames.write(img)
 
-def action(state,img):
+def action(img):
 
-    if state ==True:
-        lr,fb,ud,yv = 0,0,0,0
-        speed = 50  #-500 to 500 best to only use 500 outside
+    lr,fb,ud,yv = 0,0,0,0
+    speed = 50  #-500 to 500 best to only use 500 outside
 
-        #move left right
-        if getKey("d"): lr = speed
-        elif getKey("a"): lr = -speed
-        #up down
-        if getKey("UP"): ud = speed
-        elif getKey("DOWN"): ud = -speed
-        # move forward back
-        if getKey("w"): fb = speed
-        elif getKey("s"): fb = -speed
-        #rotate clockwise and anticlockwise
-        if getKey("RIGHT"): yv = speed
-        elif getKey("LEFT"): yv = -speed
-        #take off
-        if getKey("e"): tello.takeoff(); time.sleep(3)
-        #land
-        if getKey("q"): tello.land()
+    #move left right
+    if getKey("d"): lr = speed
+    elif getKey("a"): lr = -speed
+    #up down
+    if getKey("UP"): ud = speed
+    elif getKey("DOWN"): ud = -speed
+    # move forward back
+    if getKey("w"): fb = speed
+    elif getKey("s"): fb = -speed
+    #rotate clockwise and anticlockwise
+    if getKey("RIGHT"): yv = speed
+    elif getKey("LEFT"): yv = -speed
+    #take off
+    if getKey("e"): tello.takeoff(); time.sleep(3)
+    #land
+    if getKey("q"): tello.land()
 
-        #Take a picture
-        if getKey("p"):
-            print("Picture taken")
-            cv2.imwrite(f'/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/tello_photos/{time.time()}.jpeg',img)
-            time.sleep(0.3)
-        
-        #Take a video
-        if getKey("v"):
-            getVideoFrames(img)
+    #Take a picture
+    if getKey("p"):
+        print("Picture taken")
+        cv2.imwrite(f'/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/tello_photos/{time.time()}.jpeg',img)
+        time.sleep(0.3)
+    
+    #Take a video
+    if getKey("v"):
+        getVideoFrames(img)
 
-        #set a new target for the drone to follow
-        if getKey("t"):
-            set_target_img = img
-            cv2.imwrite(f"/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/target/new_target.jpeg",set_target_img)
-        
-        return [lr,fb,ud,yv]
-    else: pass
+    #set a new target for the drone to follow
+    if getKey("t"):
+        set_target_img = img
+        cv2.imwrite(f"/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/target/new_target.jpeg",set_target_img)
+    
+    return [lr,fb,ud,yv]
+
 
 def main():
     #testing key detection
