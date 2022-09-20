@@ -47,18 +47,18 @@ while True:
     cv2.imshow("TelloHAAR",img)
     #step 4 optional------control drone with keyboard, set to true to enable keyboard control
     vals = kbc.action(frame)    
+    tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
     time.sleep(0.05)
     #Can record videos by pressing v or take pictures with p    
     kbc.getVideoFrames(frame)
     #step 5 optional------control drone with ble devices i.e phones and watches
 
     #maping
-    #map = np.zeros((1000,1000,3),np.uint8)#3 representscolored image
-    #mapping.drawPoints(map)
+    mapping.mapping()
     
-    print("Battery at: ",tello.get_battery(),"%")
-    print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
-    print("Height at: ", tello.get_height()/100,"m")
+    # print("Battery at: ",tello.get_battery(),"%")
+    # print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
+    # print("Height at: ", tello.get_height()/100,"m")
     if cv2.waitKey(1) & kbc.getKey("c"):
         print("Communication Terminated....")
         break

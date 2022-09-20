@@ -45,6 +45,7 @@ while True:
     cv2.imshow("TelloYOLO",frame)
     #step 4 optional-------control drone with keyboard, set to true to enable keyboard control
     vals = kbc.action(frame)
+    tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
     time.sleep(0.05)
     #Can record videos by pressing v or take pictures with p    
     kbc.getVideoFrames(frame)
