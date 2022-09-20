@@ -40,7 +40,7 @@ while True:
     frame,info,name = findfaceyolo(cap)
     _,body_location = findpeople(cap)
     #step 3 track the face with PID
-    pErrorLR, pErrorUD = trackbodies(tello,body_location,w,h,pid,BodypErrorLR,BodypErrorUD,body_safe_distance)
+    BodypErrorLR, BodypErrorUD = trackbodies(tello,body_location,w,h,pid,BodypErrorLR,BodypErrorUD,body_safe_distance)
     pErrorLR, pErrorUD = trackface(tello,info,w,h,pid,pErrorLR,pErrorUD,safe_distance,name)
     cv2.imshow("TelloYOLO",frame)
     #step 4 optional-------control drone with keyboard, set to true to enable keyboard control
@@ -53,8 +53,7 @@ while True:
     #step 5 optional-------control drone with ble devices i.e phones and watches
     
     #maping
-    #map = np.zeros((1000,1000,3),np.uint8)#3 representscolored image
-    #mapping.drawPoints(map)
+    mapping.mapping()
 
     print("Battery at: ",tello.get_battery(),"%")
     print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")

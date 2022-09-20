@@ -40,7 +40,7 @@ while True:
     frame,info,name = findfaceSVM(tello_cam)
     _,body_location = findpeople(tello_cam)
     #step 3 track the face with PID
-    pErrorLR, pErrorUD = trackbodies(tello,body_location,w,h,pid,BodypErrorLR,BodypErrorUD,body_safe_distance)
+    BodypErrorLR, BodypErrorUD = trackbodies(tello,body_location,w,h,pid,BodypErrorLR,BodypErrorUD,body_safe_distance)
     pErrorLR, pErrorUD = trackface(tello,info,w,h,pid,pErrorLR,pErrorUD,safe_distance,name)
     cv2.imshow("TelloSVM",frame)
     #step 4 optional-------control drone with keyboard, set to true to enable keyboard control
@@ -56,9 +56,9 @@ while True:
     #maping
     mapping.mapping()
     
-    #print("Battery at: ",tello.get_battery(),"%")
-    #print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
-    #print("Height at: ", tello.get_height()/100)
+    print("Battery at: ",tello.get_battery(),"%")
+    print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
+    print("Height at: ", tello.get_height()/100)
     if cv2.waitKey(1) & kbc.getKey("c"):
         print("Communication Terminated....")
         break

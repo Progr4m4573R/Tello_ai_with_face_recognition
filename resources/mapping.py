@@ -40,9 +40,9 @@ def drawPoints(img):
     #distance
     d = 0
     #DRONE READINGS TO DRAW
-    speedLR = tello.get_speed_x() # between -500 and 500
+    speedLR = tello.get_speed_y() # between -500 and 500
     #multiply by -1 one to make north go up as grid points start at (0,0) in top left not bottom left
-    speedFB = -1*(tello.get_speed_y()) # between -500 and 500 
+    speedFB = -1*(tello.get_speed_x()) # between -500 and 500 
     tello_yaw = tello.get_yaw() # between -360 and 360
     height = tello.get_height()
     # the acceleration values fluctuate when drone is at a stand still so there is a need for ignoring noise
@@ -63,12 +63,12 @@ def drawPoints(img):
     if speedFB > positive_threshold:
         d = -dInterval
         a = 270
-        #print("moving foward: ", speedFB)
+        print("moving foward: ", speedFB)
     #MOVING BACKWARD
     elif speedFB < negative_threshold:
         d = dInterval
         a = -90
-        #print("moving backward: ", speedFB)
+        print("moving backward: ", speedFB)
     #ROTATING RIGHT
     if tello_yaw > positive_threshold:
         if yaw < tello_yaw:
@@ -99,13 +99,13 @@ def drawPoints(img):
     cv2.circle(img,(coordinates[-1]),8,(0,255,0),cv2.FILLED)#BGR
     cv2.putText(img,"Tello", (tello_x,tello_y),cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
     
-    cv2.putText(img,(f'x = {(coordinates[-1][0]-grid_width/2)/100},y = {(coordinates[-1][1]-grid_height/2)/100},yaw = {yaw} degrees,z = {height} metres'),(coordinates[-1][0]+10,coordinates[-1][1] + 30),cv2.FONT_HERSHEY_PLAIN,1,(0,0,255),1)
+    cv2.putText(img,(f'x = {(coordinates[-1][0]-grid_width/2)/100},y = {(coordinates[-1][1]-grid_height/2)/100},yaw = {yaw} degrees,z = {height/100} metres'),(coordinates[-1][0]+10,coordinates[-1][1] + 30),cv2.FONT_HERSHEY_PLAIN,1,(0,0,255),1)
     cv2.imshow("Tello map", img)
 def mapping():
     img_shape = (grid_width,grid_height,4)
     img = np.zeros(img_shape,np.uint8)#3 representscolored image
     #source https://www.adamsmith.haus/python/answers/how-to-convert-an-image-to-an-array-in-python
-    temp = Image.open("Tello map template 2.0.png")
+    temp = Image.open("/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/Tello map template 2.0.png")
     map = temp.resize((grid_width,grid_height),Resampling.LANCZOS)
     image_sequence = map.getdata()
     map_array = np.array(image_sequence)
