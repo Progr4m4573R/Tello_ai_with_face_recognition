@@ -21,6 +21,8 @@ Python Requirements:
 Tello_all_in_one: When running Face recognition code some functions and features can end up slowing down the frame rate of the output video. In addition to this, remote control also experiences a lag in drone response to control input These functions are vital for some autonomous features and therefore cannot be removed. However, the drone can be run with them by commenting them out.
 
 The functions to comment out for smooth manual control are:
- FunctionBodytracking
- trackbodies
- tracface
+ 
+Bodytracking
+trackbodies
+tracface
+mapping
