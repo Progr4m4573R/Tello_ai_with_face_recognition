@@ -2,9 +2,9 @@ import cv2
 import pygame
 import numpy as np
 import time
-from face_tracking import *
-from body_tracking import *
-import mapping
+from face_tracking import telloGetFrame,findfacehaar,findfaceSVM,findfaceyolo,initialisetello,trackface
+#from body_tracking import *
+#import mapping
 # Speed of the drone
 # 无人机的速度
 S = 60
@@ -148,23 +148,24 @@ class FrontEnd(object):
                 #DEFAULT TO NO FACE RECOGNITION IF ONE IS NOT SET
                 frame,_,_= img
                 #step 3 track the face with PID
-            self.pErrorLR, self.pErrorUD = trackbodies(self.tello,info,w,h,self.pid,self.pErrorLR,self.pErrorUD,self.safe_distance)
-            self.pErrorLR, self.pErrorUD = trackface(self.tello,info,w,h,self.pid,self.pErrorLR,self.pErrorUD,self.safe_distance,name)
+            #self.pErrorLR, self.pErrorUD = trackbodies(self.tello,info,w,h,self.pid,self.pErrorLR,self.pErrorUD,self.safe_distance)
+            #self.pErrorLR, self.pErrorUD = trackface(self.tello,info,w,h,self.pid,self.pErrorLR,self.pErrorUD,self.safe_distance,name)
+            
             #mapping
-            map = np.zeros((1000,1000,3),np.uint8)#3 can replace with map image
-            mapping.drawPoints(map)
+            #mapping.mapping()
+            
             # battery, signal strength, drone height 电池
             battery_text = "Battery: {}%".format(self.tello.get_battery())
-            drone_signal = "Signal: {}%".format(self.tello.query_wifi_signal_noise_ratio())
-            drone_height = "Height: {} m".format((self.tello.get_height())/100)
+            # drone_signal = "Signal: {}%".format(self.tello.query_wifi_signal_noise_ratio())
+            # drone_height = "Height: {} m".format((self.tello.get_height())/100)
             
             #THESE SLOW THE FRAME RATE A LITTLE SO CONSIDER DISPLAYING IN CMD ONLY
             cv2.putText(frame, battery_text, (5, 720 - 5),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(frame, drone_signal, (225, 720 - 5),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-            cv2.putText(frame, drone_height, (430, 720 - 5),
-                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # cv2.putText(frame, drone_signal, (225, 720 - 5),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            # cv2.putText(frame, drone_height, (430, 720 - 5),
+            #     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = np.rot90(frame)
@@ -173,7 +174,7 @@ class FrontEnd(object):
             frame = pygame.surfarray.make_surface(frame)
             self.screen.blit(frame, (0, 0))
             pygame.display.update()
-
+            #print("FPS rate in modified rate is at:",FPS)
             time.sleep(1 / FPS)
         # Call it always before finishing. To deallocate resources.
         # 通常在结束前调用它以释放资源

@@ -3,7 +3,7 @@ import cv2
 import pygame
 import numpy as np
 import time
-from face_tracking import telloGetFrame, findfacehaar, initialisetello
+from face_tracking import telloGetFrame, findfacehaar, initialisetello, findfaceSVM
 # Speed of the drone
 # 无人机的速度
 S = 60
@@ -24,8 +24,8 @@ class FrontEnd(object):
     """ Maintains the Tello display and moves it through the keyboard keys.
         Press escape key to quit.
         The controls are:
-            - T: Takeoff
-            - L: Land
+            - e: Takeoff
+            - q: Land
             - Arrow keys: Forward, backward, left and right.
             - A and D: Counter clockwise and clockwise rotations (yaw)
             - W and S: Up and down.
@@ -130,7 +130,7 @@ class FrontEnd(object):
         
             self.screen.fill([0, 0, 0])
             img = telloGetFrame(self.tello,960,720)
-            frame,_,_ = findfacehaar(img)
+            frame,_,_ = findfaceSVM(img)
             
             # battery n. 电池
             text = "Battery: {}%".format(self.tello.get_battery())
@@ -143,7 +143,7 @@ class FrontEnd(object):
             frame = pygame.surfarray.make_surface(frame)
             self.screen.blit(frame, (0, 0))
             pygame.display.update()
-
+            #print("FPS rate modified rate is at:",FPS)
             time.sleep(1 / FPS)
 
         # Call it always before finishing. To deallocate resources.
@@ -209,12 +209,10 @@ class FrontEnd(object):
             self.tello.send_rc_control(self.left_right_velocity, self.for_back_velocity,
                 self.up_down_velocity, self.yaw_velocity)
 
-
 def main():
     frontend = FrontEnd()
 
     frontend.run()
-
 
 if __name__ == '__main__':
     main()
