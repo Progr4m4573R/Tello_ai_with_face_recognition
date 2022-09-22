@@ -123,16 +123,16 @@ class FrontEnd(object):
             #Take a picture
             if self.getKey('p'):
                 print("Picture taken")
-                cv2.imwrite(f'/home/thinkpad/Desktop/Tello_ai_with_face_recognition/tello_photos/{time.time()}.jpeg',frame)
+                cv2.imwrite(f'/home/thinkpad/Desktop/Tello_ai_with_face_recognition/tello_photos/{time.time()}.jpeg',img)
                 time.sleep(0.3)
             
             #Take a video
             if self.getKey('v'):
-                self.getVideoFrames(frame)
+                self.getVideoFrames(img)
 
             #set a new target for the drone to follow
             if self.getKey('t'):
-                set_target_img = frame
+                set_target_img = img
                 cv2.imwrite(f"/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/target/new_target.jpeg",set_target_img)
 
             self.screen.fill([0, 0, 0])
