@@ -57,8 +57,8 @@ while True:
     mapping.mapping()
     
     print("Battery at: ",tello.get_battery(),"%")
-    print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
-    print("Height at: ", tello.get_height()/100)
+    # print("Signal at: ",tello.query_wifi_signal_noise_ratio(),"%")
+    # print("Height at: ", tello.get_height()/100)
     if cv2.waitKey(1) & kbc.getKey("c"):
         print("Communication Terminated....")
         break

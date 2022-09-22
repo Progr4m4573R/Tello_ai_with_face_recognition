@@ -7,7 +7,7 @@ import numpy as np
 # using this code without author's permission other then leaning task is strictly prohibited
 
 ## provide the absolute path for testing config file and tained model from colab
-net = cv2.dnn.readNetFromDarknet("/home/thinkpad/Desktop/Tello_ai_face_recognition/tello-ai/facetrac_yolo/src/yolov3_custom.cfg","/home/thinkpad/Desktop/Tello_ai_face_recognition/tello-ai/facetrac_yolo/src/backup/yolov3_custom_6000.weights")
+net = cv2.dnn.readNetFromDarknet("/home/thinkpad/Desktop/Tello_ai_with_face_recognition/facetrac_yolo/src/yolov3_custom.cfg","/home/thinkpad/Desktop/Tello_ai_with_face_recognition/facetrac_yolo/src/backup/yolov3_custom_6000.weights")
 
 # Change here for custom classes for trained model this is really important because if the names are not in the correct order it will appear like improper classification
 classes = ['Dog','Barak Obama','Stephen','Jack Sparrow']

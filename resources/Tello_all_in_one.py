@@ -243,14 +243,14 @@ def main():
     frontend = FrontEnd()
     # Uncomment one of the following sets to choose a different recognition algorithm
     #1
-    frontend.Current_Face_Recognition_output = "TELLO HAAR CASCADE"
-    frontend.action("HAAR")
+    # frontend.Current_Face_Recognition_output = "TELLO HAAR CASCADE"
+    # frontend.action("HAAR")
     #2
     # frontend.Current_Face_Recognition_output = "TELLO YOLO CASCADE"
     # frontend.action("YOLO")
     #3
-    # frontend.Current_Face_Recognition_output = "TELLO SVM CASCADE"
-    # frontend.action("SVM")
+    frontend.Current_Face_Recognition_output = "TELLO SVM CASCADE"
+    frontend.action("SVM")
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+     main()
