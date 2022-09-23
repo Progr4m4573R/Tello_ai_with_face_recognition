@@ -136,8 +136,8 @@ def findfaceSVM(frame):
 
     #load a target image relative to code location
     #cwd = os.getcwd()
-    default_folder = "/home/thinkpad/Desktop/msc_face_recognition_project/examples/default_image/"
-    target_folder = "/home/thinkpad/Desktop/msc_face_recognition_project/examples/target_image/"
+    default_folder = "/home/thinkpad/Desktop/msc_face_recognition_project/examples/target_image/"
+    target_folder = "/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/target/"
     try:
         tmp = os.listdir(target_folder)
 

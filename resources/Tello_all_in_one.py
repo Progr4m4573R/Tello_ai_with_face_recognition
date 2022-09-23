@@ -251,7 +251,7 @@ def main():
     # frontend.action("YOLO")
     #3
     frontend.Current_Face_Recognition_output = "TELLO SVM CASCADE"
-    frontend.action("SVM")
+    frontend.action()
 
 if __name__ == '__main__':
      main()

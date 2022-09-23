@@ -44,7 +44,7 @@ while True:
     pErrorLR, pErrorUD = trackface(tello,info,w,h,pid,pErrorLR,pErrorUD,safe_distance,name)
     cv2.imshow("TelloYOLO",frame)
     #step 4 optional-------control drone with keyboard, set to true to enable keyboard control
-    vals = kbc.action(frame)
+    vals = kbc.action(frame) # switch to cap instead of frame to take pictures without detection box   
     tello.send_rc_control(vals[0],vals[1],vals[2],vals[3])
     time.sleep(0.05)
     #Can record videos by pressing v or take pictures with p    
@@ -52,7 +52,7 @@ while True:
 
     #step 5 optional-------control drone with ble devices i.e phones and watches
     
-    #maping
+    #mapping
     mapping.mapping()
 
     print("Battery at: ",tello.get_battery(),"%")
