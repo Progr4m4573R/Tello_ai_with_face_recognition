@@ -22,10 +22,10 @@ Tello_all_in_one: When running Face recognition code some functions and features
 
 The modules and functions to comment out for manual control only are:
  
-module: Bodytracking
-function: trackbodies
-function: trackface
-module: mapping
+* module: Bodytracking
+* function: trackbodies
+* function: trackface
+* module: mapping
 
 if you get an error saying cannot find a module names resources then you can run the add_resources_to_path.sh script in the github directory of the cloned repo and this should solve the problem. if you log out of the system you will have to run the script again to add resources to path. alternatively you can copy and paste the contents of the add_resources_to_path to a .bash_profile or and then source it with "source ~/.bash_profile" in the command terminal.
 
