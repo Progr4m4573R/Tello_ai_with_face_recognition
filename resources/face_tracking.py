@@ -115,6 +115,28 @@ def findfaceyolo(img):
                 facecoordsArea.append(area)
                 facecoords.append([cx,cy])
     indexes = cv2.dnn.NMSBoxes(boxes,confidences,.5,.4)
+    #Not sure why this is repeated
+    boxes =[]
+    confidences = []
+    class_ids = []
+
+    for output in layerOutputs:
+        for detection in output:
+            score = detection[5:]
+            class_id = np.argmax(score)
+            confidence = score[class_id]
+            if confidence > 0.5:
+                center_x = int(detection[0] * width)
+                center_y = int(detection[1] * hight)
+                w = int(detection[2] * width)
+                h = int(detection[3]* hight)
+                x = int(center_x - w/2)
+                y = int(center_y - h/2)
+                boxes.append([x,y,w,h])
+                confidences.append((float(confidence)))
+                class_ids.append(class_id)
+    indexes = cv2.dnn.NMSBoxes(boxes,confidences,.8,.4)
+    
     font = cv2.FONT_HERSHEY_PLAIN
     color = (255,255,0)
     if  len(indexes)>0:

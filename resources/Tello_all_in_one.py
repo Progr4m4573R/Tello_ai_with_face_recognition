@@ -1,8 +1,9 @@
+from turtle import speed
 import cv2
 import pygame
 import numpy as np
 import time
-from face_tracking import telloGetFrame,findfacehaar,findfaceSVM,findfaceyolo,initialisetello,trackface
+from resources.face_tracking import telloGetFrame,findfacehaar,findfaceSVM,findfaceyolo,initialisetello,trackface
 #from body_tracking import *
 #import mapping
 # Speed of the drone
@@ -64,8 +65,8 @@ class FrontEnd(object):
         self.left_right_velocity = 0
         self.up_down_velocity = 0
         self.yaw_velocity = 0
-        self.speed = 10
-
+        self.speed = 50
+        self.tello.set_speed(self.speed)
         self.send_rc_control = False
 
         # create update timer
@@ -244,14 +245,14 @@ def main():
     frontend = FrontEnd()
     # Uncomment one of the following sets to choose a different recognition algorithm
     #1
-    # frontend.Current_Face_Recognition_output = "TELLO HAAR CASCADE"
-    # frontend.action("HAAR")
+    #frontend.Current_Face_Recognition_output = "TELLO HAAR CASCADE"
+    #frontend.action("HAAR")
     #2
     # frontend.Current_Face_Recognition_output = "TELLO YOLO CASCADE"
     # frontend.action("YOLO")
     #3
     frontend.Current_Face_Recognition_output = "TELLO SVM CASCADE"
-    frontend.action()
+    frontend.action("SVM")
 
 if __name__ == '__main__':
      main()

@@ -1,16 +1,11 @@
-from djitellopy import Tello
 import pygame
 import time
 import cv2
-import numpy as np
-#initialise tello
-tello = Tello()
 
-#
 global set_target_img
 
 #prep for saving videos
-w,h = 720,480
+w,h = 960,720
 fourcc = cv2.VideoWriter_fourcc(*'XVID')
 video_frames = cv2.VideoWriter(f'/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/tello_videos/{time.time()}.avi',fourcc,20.0,(w,h))
 
@@ -37,10 +32,10 @@ def getVideoFrames(img):
     
     video_frames.write(img)
 
-def action(img):
+def action(tello,img):
 
     lr,fb,ud,yv = 0,0,0,0
-    speed = 50  #-500 to 500 best to only use 500 outside
+    speed = 50 #-500 to 500 best to only use 500 outside
 
     #move left right
     if getKey("d"): lr = speed
@@ -62,7 +57,7 @@ def action(img):
     #Take a picture
     if getKey("p"):
         print("Picture taken")
-        cv2.imwrite(f'/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/tello_photos/{time.time()}.jpeg',img)
+        cv2.imwrite(f'/home/thinkpad/Desktop/Tello_ai_with_face_recognition/tello_photos/{time.time()}.jpeg',img)
         time.sleep(0.3)
     
     #Take a video
@@ -72,7 +67,7 @@ def action(img):
     #set a new target for the drone to follow
     if getKey("t"):
         set_target_img = img
-        cv2.imwrite(f"/home/thinkpad/Desktop/TelloAI_face_recognition/tello-ai/resources/target/new_target.jpeg",set_target_img)
+        cv2.imwrite(f"/home/thinkpad/Desktop/Tello_ai_with_face_recognition/resources/target/new_target.jpeg",set_target_img)
     
     return [lr,fb,ud,yv]
 
@@ -91,5 +86,6 @@ def main():
 
 if __name__ == '__main__':
     init()
+    print("Keboard control called")
     while True:
         main()

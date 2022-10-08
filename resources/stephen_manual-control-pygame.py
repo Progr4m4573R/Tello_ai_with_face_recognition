@@ -3,7 +3,7 @@ import cv2
 import pygame
 import numpy as np
 import time
-from face_tracking import telloGetFrame, findfacehaar, initialisetello, findfaceSVM
+from resources.face_tracking import telloGetFrame, findfacehaar, initialisetello, findfaceSVM
 # Speed of the drone
 # 无人机的速度
 S = 60
@@ -26,9 +26,9 @@ class FrontEnd(object):
         The controls are:
             - e: Takeoff
             - q: Land
-            - Arrow keys: Forward, backward, left and right.
-            - A and D: Counter clockwise and clockwise rotations (yaw)
-            - W and S: Up and down.
+            - Arrow keys: Up and down, Counter clockwise and clockwise rotations (yaw)
+            - A and D: left and right.
+            - W and S: Forward, backward, 
 
         保持Tello画面显示并用键盘移动它
         按下ESC键退出
@@ -61,7 +61,7 @@ class FrontEnd(object):
         self.left_right_velocity = 0
         self.up_down_velocity = 0
         self.yaw_velocity = 0
-        self.speed = 10
+        self.speed = 500
 
         self.send_rc_control = False
 
@@ -134,8 +134,15 @@ class FrontEnd(object):
             
             # battery n. 电池
             text = "Battery: {}%".format(self.tello.get_battery())
+            drone_signal = "Signal: {}%".format(self.tello.query_wifi_signal_noise_ratio())
+            drone_height = "Height: {} m".format((self.tello.get_height())/100)
             cv2.putText(frame, text, (5, 720 - 5),
                 cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, drone_signal, (225, 720 - 5),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+            cv2.putText(frame, drone_height, (430, 720 - 5),
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             frame = np.rot90(frame)
             frame = np.flipud(frame)

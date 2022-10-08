@@ -1,7 +1,7 @@
 
 import cv2
 import numpy as np
-
+import matplotlib.pyplot as plt
 
 #author - Jay Shankar Bhatt 
 # using this code without author's permission other then leaning task is strictly prohibited
